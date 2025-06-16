@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TikTok Video Downloader</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    video {
+      width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TikTok Video Downloader</h1>
+  <input type="text" id="tiktokUrl" placeholder="Paste TikTok video URL here" />
+  <br>
+  <button onclick="downloadVideo()">Download</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById('tiktokUrl').value;
+      const result = document.getElementById('result');
+      result.innerHTML = 'Fetching video...';
+
+      const options = {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'X-RapidAPI-Key': 'd870ed5836mshf0f4455060ce3cdp17f447jsn44417fc7c19f',
+          'X-RapidAPI-Host': 'tiktok-video-no-watermark2.p.rapidapi.com'
+        },
+        body: JSON.stringify({ url: url })
+      };
+
+      try {
+        const res = await fetch('https://tiktok-video-no-watermark2.p.rapidapi.com/', options);
+        const data = await res.json();
+
+        if (data.code === 0 && data.data.video_url) {
+          result.innerHTML = `
+            <video controls src="${data.data.video_url}"></video>
+            <br>
+            <a href="${data.data.video_url}" download>
+              <button>Download No Watermark</button>
+            </a>
+          `;
+        } else {
+          result.innerHTML = 'Video not found or error in response.';
+        }
+      } catch (error) {
+        result.innerHTML = 'Failed to fetch video. Try again.';
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
